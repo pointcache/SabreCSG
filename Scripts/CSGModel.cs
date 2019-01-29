@@ -69,15 +69,15 @@ namespace Sabresaurus.SabreCSG
             }
         }
 
-		Dictionary<MainMode, Tool> tools = new Dictionary<MainMode, Tool>()
-		{
-			{ MainMode.Resize, new ResizeEditor() },
-			{ MainMode.Vertex, new VertexEditor() },
-			{ MainMode.Face, new SurfaceEditor() },
-			{ MainMode.Clip, new ClipEditor() },
-			{ MainMode.Draw, new DrawEditor() },
+        Dictionary<MainMode, Tool> tools = new Dictionary<MainMode, Tool>()
+        {
+            { MainMode.Resize, new ResizeEditor() },
+            { MainMode.Vertex, new VertexEditor() },
+            { MainMode.Face, new SurfaceEditor() },
+            { MainMode.Clip, new ClipEditor() },
+            { MainMode.Draw, new DrawEditor() },
             { MainMode.Paint, new PaintEditor() },
-		};
+        };
 
         private Dictionary<OverrideMode, Tool> overrideTools = new Dictionary<OverrideMode, Tool>()
         {
@@ -450,7 +450,16 @@ namespace Sabresaurus.SabreCSG
                         {
                             if (brushes[brushIndex].Mode == CSGMode.Volume)
                             {
-                                outlineColor = new Color32(0, 0, 0, 255);
+                                var volume = brushes[brushIndex].Volume;
+                                var type = volume.GetType();
+                                if (type == typeof(Volumes.PhysicsVolume))
+                                {
+                                    outlineColor = new Color32(137, 255, 0, 255);
+                                }
+                                else if (type == typeof(Volumes.TriggerVolume))
+                                {
+                                    outlineColor = new Color32(255, 186, 126, 255);
+                                }
                             }
                             else if (!brushes[brushIndex].IsVisible)
                             {
@@ -468,7 +477,7 @@ namespace Sabresaurus.SabreCSG
                                 }
                                 else
                                 {
-                                    outlineColor = new Color32(255, 130, 0, 255);
+                                    outlineColor = new Color32(255,64,115,255);
                                 }
                             }
                         }
@@ -624,7 +633,8 @@ namespace Sabresaurus.SabreCSG
             }
 
             // don't change the selection when double clicked.
-            if (mouseIsDoubleClick) return;
+            if (mouseIsDoubleClick)
+                return;
 
             // Left click - select
             if (e.button == 0)
@@ -1037,20 +1047,20 @@ namespace Sabresaurus.SabreCSG
             {
                 // Skip any selected prefabs in the project window
 #if UNITY_2018_2_OR_NEWER
-				if(PrefabUtility.GetCorrespondingObjectFromSource(Selection.gameObjects[i]) == null
+                if (PrefabUtility.GetCorrespondingObjectFromSource(Selection.gameObjects[i]) == null
 #else
                 if (PrefabUtility.GetPrefabParent(Selection.gameObjects[i]) == null
 #endif
 #if !UNITY_2018_3
 					&& PrefabUtility.GetPrefabObject(Selection.gameObjects[i].transform) != null)
 #else
-					&& PrefabUtility.GetPrefabInstanceHandle(Selection.gameObjects[i].transform) != null)
+                    && PrefabUtility.GetPrefabInstanceHandle(Selection.gameObjects[i].transform) != null)
 #endif
-				{
-					continue;
-				}
+                {
+                    continue;
+                }
 
-				PrimitiveBrush primitiveBrush = Selection.gameObjects[i].GetComponent<PrimitiveBrush>();
+                PrimitiveBrush primitiveBrush = Selection.gameObjects[i].GetComponent<PrimitiveBrush>();
                 CSGModel csgModel = Selection.gameObjects[i].GetComponent<CSGModel>();
 
                 if (csgModel == null)
@@ -1191,7 +1201,7 @@ namespace Sabresaurus.SabreCSG
 
 #endif
 
-		public void SetLastSelectedBrush(Brush brush)
+        public void SetLastSelectedBrush(Brush brush)
         {
             lastSelectedBrush = brush;
         }
@@ -1265,7 +1275,7 @@ namespace Sabresaurus.SabreCSG
                         Graphics.DrawTexture(drawRect, SabreCSGResources.SubtractIconTexture, iconMaterial);
                     }
                 }
-                else if(gameObject.HasComponent<CSGModel>())
+                else if (gameObject.HasComponent<CSGModel>())
                 {
                     drawRect.xMax -= 2;
                     drawRect.xMin = drawRect.xMax - 16;
@@ -1360,7 +1370,7 @@ namespace Sabresaurus.SabreCSG
                 if (anyCSGModelsInEditMode)
                 {
                     editModeModel = GetActiveCSGModel();
-                    UpdateAllBrushesVisibility(); 
+                    UpdateAllBrushesVisibility();
                 }
             }
 #endif
